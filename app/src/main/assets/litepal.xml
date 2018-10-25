@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<litepal>
+    <dbname value="Area"/>
+    <version value="1"/>
+    <list>
+        <mapping class="com.example.zero.zeroweather.model.db.Province"/>
+        <mapping class="com.example.zero.zeroweather.model.db.City"/>
+        <mapping class="com.example.zero.zeroweather.model.db.County"/>
+    </list>
+</litepal>
