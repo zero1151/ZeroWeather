@@ -12,6 +12,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Intent intent = new Intent(MainActivity.this,ChooseAreaActivity.class);
         startActivity(intent);
+        finish();
 
     }
 }

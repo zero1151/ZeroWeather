@@ -1,8 +1,12 @@
 package com.example.zero.zeroweather;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.example.zero.zeroweather.model.gson.Area;
@@ -10,12 +14,16 @@ import com.example.zero.zeroweather.model.db.City;
 import com.example.zero.zeroweather.model.db.County;
 import com.example.zero.zeroweather.model.db.Province;
 import com.example.zero.zeroweather.model.gson.CountyWeather;
+import com.example.zero.zeroweather.util.AreaUtil;
 import com.example.zero.zeroweather.util.HttpUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.litepal.crud.DataSupport;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
 import okhttp3.Call;
@@ -25,134 +33,100 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSource;
 
+//完全没进行出错判断处理，比如没有网络，待进行  而且得选择完城市后才进入天气界面
 public class ChooseAreaActivity extends AppCompatActivity {
+
+    private List<String> dataList = new ArrayList<>();;
+    private ListView listView;
+    private List<Province> provinceList;
+    private List<City> cityList;
+    private List<County> countyList;
+    private ArrayAdapter<String> adapter;
+    //状态，012表示当前处于省市县界面
+    private int status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_area);
-        ListView listView = findViewById(R.id.areaListView);
-        //如果还没省市县数据，则记得读取
-//         requestArea();
-    }
-    /** 向服务器请求地区选择信息 */
-    private void requestArea() {
-        String address = "http://guolin.tech/api/china/";
-        HttpUtil.sendOkHttpRequest(address, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
 
-            /** string不能调用2次，因为源码中调用了close()，这里应该clone出来，手动关闭 */
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                ResponseBody responseBody = response.body();
-                BufferedSource source = responseBody.source();
-                source.request(Long.MAX_VALUE); // request the entire body.
-                Buffer buffer = source.buffer();
-                // clone buffer before reading from it
-                String responseBodyString = buffer.clone().readString(Charset.forName("UTF-8"));
-//                String responseData = response.body().string();
-                response.close();
-//                Log.d("deep", "onResponse: " + responseBodyString);
-                parseProvince(responseBodyString);
-            }
-        });
-    }
+         /*       //如果还没省市县数据，则记得读取
+        AreaUtil areaUtil = new AreaUtil();
+        areaUtil.requestArea();*/
 
-    /** 解析省级Json数据，并直接保存到数据库*/
-    private void parseProvince(String jsonData) {
-        Gson gson = new Gson();
-        //解析数组要借助TypeToken将期望解析成的数据类型传入到fromJson中
-        List<Area> areaList = gson.fromJson(jsonData,new TypeToken<List<Area>>(){}.getType());
-        for(Area area:areaList){
-            Province province = new Province();
-            province.setProvinceCode(area.getId());
-            province.setName(area.getName());
-            province.save();
-            //请求市级Json数据
-            requestCity(area.getId());
-        }
-    }
+         //初始化状态为省
+        status = 0;
 
-    /** 请求市级Json数据 */
-    private void requestCity(final int provinceId) {
-        String address = "http://guolin.tech/api/china/" + provinceId;
-        HttpUtil.sendOkHttpRequest(address, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
+        listView = findViewById(R.id.areaListView);
 
+        adapter = new ArrayAdapter<>(ChooseAreaActivity.this,
+                android.R.layout.simple_list_item_1,dataList);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
-//                String responseData = response.body().string();
-                ResponseBody responseBody = response.body();
-                BufferedSource source = responseBody.source();
-                source.request(Long.MAX_VALUE); // request the entire body.
-                Buffer buffer = source.buffer();
-                // clone buffer before reading from it
-                String responseBodyString = buffer.clone().readString(Charset.forName("UTF-8"));
-//                String responseData = response.body().string();
-                response.close();
-                parseCity(responseBodyString,provinceId);
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                switch (status){
+                    case 0:
+                        Province province = provinceList.get(i);
+                        //更改适配器中的内容为城市
+                        readCity(province.getProvinceCode());
+                        status++;
+                        break;
+                    case 1:
+                        City city = cityList.get(i);
+                        readCounty(city.getCityCode());
+                        status++;
+                        break;
+                    case 2:
+                        County county = countyList.get(i);
+                        Intent intent = new Intent(ChooseAreaActivity.this,WeatherActivity.class);
+                        intent.putExtra("WeatherID",county.getWeatherId());
+                        startActivity(intent);
+//                        requestWeather(county.getWeatherId());
+                        status = 0;
+                        finish();
+                        break;
+                    default:
+                        break;
+                }
+
             }
         });
+        readProvince();
     }
 
-    /** 解析市级数据 */
-    private void parseCity(String cityData,int provinceId) {
-        Gson gson = new Gson();
-        List<Area> areaList = gson.fromJson(cityData,new TypeToken<List<Area>>(){}.getType());
-        for(Area area:areaList){
-            City city = new City();
-            city.setProvinceCode(provinceId);
-            city.setName(area.getName());
-            city.setCityCode(area.getId());
-            city.save();
-            //请求县级Json数据
-            requestCounty(area.getId(),provinceId);
 
+    /** 进入选择地区界面时要先显示各省 */
+    private void readProvince() {
+        provinceList = DataSupport.findAll(Province.class);
+        dataList.clear();
+        for(Province province:provinceList){
+            dataList.add(province.getName());
         }
+        adapter.notifyDataSetChanged();
+
     }
 
-    /** 请求县级数据 */
-    private void requestCounty(final int cityId, int provinceId) {
-        String address = "http://guolin.tech/api/china/" + provinceId + "/" + cityId;
-        HttpUtil.sendOkHttpRequest(address, new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-//                String countyData = response.body().string();
-                ResponseBody responseBody = response.body();
-                BufferedSource source = responseBody.source();
-                source.request(Long.MAX_VALUE); // request the entire body.
-                Buffer buffer = source.buffer();
-                // clone buffer before reading from it
-                String responseBodyString = buffer.clone().readString(Charset.forName("UTF-8"));
-//                String responseData = response.body().string();
-                response.close();
-                parseCounty(responseBodyString,cityId);
-            }
-        });
-    }
-
-    /** 解析县级数据 */
-    private void parseCounty(String conutyData,int cityCode) {
-        Gson gson = new Gson();
-        List<CountyWeather> countyWeatherList = gson.fromJson(conutyData,new TypeToken<List<CountyWeather>>(){}.getType());
-        for(CountyWeather countyWeather:countyWeatherList){
-            County county = new County();
-            county.setCityCode(cityCode);
-            county.setCountyCode(countyWeather.getId());
-            county.setName(countyWeather.getName());
-            county.setWeatherId(countyWeather.getWeatherId());
-            county.save();
+    /** 读取城市列表 ,此时点击返回会直接回到天气界面，待修改*/
+    private void readCity(int provinceCode) {
+        cityList = DataSupport.where("provinceCode = ?", "" + provinceCode)
+                .find(City.class);
+        //直接修改dataList，保证只有一个adapter,只有一个listView
+        dataList.clear();
+        for(City city:cityList){
+            dataList.add(city.getName());
         }
+        adapter.notifyDataSetChanged();
     }
+
+    /** 读取县 */
+    private void readCounty(int cityCode) {
+        countyList = DataSupport.where("cityCode = ?","" + cityCode).find(County.class);
+        dataList.clear();
+        for (County county:countyList){
+            dataList.add(county.getName());
+        }
+        adapter.notifyDataSetChanged();
+    }
+
 }

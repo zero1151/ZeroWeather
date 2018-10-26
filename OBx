@@ -1,0 +1,580 @@
+[33mcommit 22374af8d977af1167b91b430ab9a7902837a3e6[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Author: zero1151 <1151666590@qq.com>
+Date:   Thu Oct 25 21:52:02 2018 +0800
+
+    Area done.
+
+[1mdiff --git a/.idea/vcs.xml b/.idea/vcs.xml[m
+[1mnew file mode 100644[m
+[1mindex 0000000..94a25f7[m
+[1m--- /dev/null[m
+[1m+++ b/.idea/vcs.xml[m
+[36m@@ -0,0 +1,6 @@[m
+[32m+[m[32m<?xml version="1.0" encoding="UTF-8"?>[m
+[32m+[m[32m<project version="4">[m
+[32m+[m[32m  <component name="VcsDirectoryMappings">[m
+[32m+[m[32m    <mapping directory="$PROJECT_DIR$" vcs="Git" />[m
+[32m+[m[32m  </component>[m
+[32m+[m[32m</project>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/.gitignore b/app/.gitignore[m
+[1mindex 3fe82fd..42afabf 100644[m
+[1m--- a/app/.gitignore[m
+[1m+++ b/app/.gitignore[m
+[36m@@ -1,3 +1 @@[m
+[31m-/build[m
+[31m-/src/test[m
+[31m-/src/androidTest[m
+\ No newline at end of file[m
+[32m+[m[32m/build[m
+\ No newline at end of file[m
+[1mdiff --git a/app/build.gradle b/app/build.gradle[m
+[1mindex 05bb5ad..b8be95c 100644[m
+[1m--- a/app/build.gradle[m
+[1m+++ b/app/build.gradle[m
+[36m@@ -23,6 +23,9 @@[m [mdependencies {[m
+     implementation 'com.android.support:appcompat-v7:28.0.0'[m
+     implementation 'com.android.support.constraint:constraint-layout:1.1.3'[m
+     testImplementation 'junit:junit:4.12'[m
+[32m+[m[32m    implementation 'com.squareup.okhttp3:okhttp:3.11.0'[m
+[32m+[m[32m    implementation 'com.google.code.gson:gson:2.8.0'[m
+[32m+[m[32m    implementation 'org.litepal.android:core:1.3.2'[m
+     androidTestImplementation 'com.android.support.test:runner:1.0.2'[m
+     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'[m
+ }[m
+[1mdiff --git a/app/src/androidTest/java/com/example/zero/zeroweather/ExampleInstrumentedTest.java b/app/src/androidTest/java/com/example/zero/zeroweather/ExampleInstrumentedTest.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..9ccdbb7[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/androidTest/java/com/example/zero/zeroweather/ExampleInstrumentedTest.java[m
+[36m@@ -0,0 +1,26 @@[m
+[32m+[m[32mpackage com.example.zero.zeroweather;[m
+[32m+[m
+[32m+[m[32mimport android.content.Context;[m
+[32m+[m[32mimport android.support.test.InstrumentationRegistry;[m
+[32m+[m[32mimport android.support.test.runner.AndroidJUnit4;[m
+[32m+[m
+[32m+[m[32mimport org.junit.Test;[m
+[32m+[m[32mimport org.junit.runner.RunWith;[m
+[32m+[m
+[32m+[m[32mimport static org.junit.Assert.*;[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Instrumented test, which will execute on an Android device.[m
+[32m+[m[32m *[m
+[32m+[m[32m * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>[m
+[32m+[m[32m */[m
+[32m+[m[32m@RunWith(AndroidJUnit4.class)[m
+[32m+[m[32mpublic class ExampleInstrumentedTest {[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    public void useAppContext() {[m
+[32m+[m[32m        // Context of the app under test.[m
+[32m+[m[32m        Context appContext = InstrumentationRegistry.getTargetContext();[m
+[32m+[m
+[32m+[m[32m        assertEquals("com.example.zero.zeroweather", appContext.getPackageName());[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/AndroidManifest.xml b/app/src/main/AndroidManifest.xml[m
+[1mindex 0ac4d20..1884195 100644[m
+[1m--- a/app/src/main/AndroidManifest.xml[m
+[1m+++ b/app/src/main/AndroidManifest.xml[m
+[36m@@ -2,7 +2,9 @@[m
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"[m
+     package="com.example.zero.zeroweather">[m
+ [m
+[32m+[m[32m    <uses-permission android:name="android.permission.INTERNET"/>[m
+     <application[m
+[32m+[m[32m        android:name="org.litepal.LitePalApplication"[m
+         android:allowBackup="true"[m
+         android:icon="@mipmap/ic_launcher"[m
+         android:label="@string/app_name"[m
+[36m@@ -16,6 +18,7 @@[m
+                 <category android:name="android.intent.category.LAUNCHER" />[m
+             </intent-filter>[m
+         </activity>[m
+[32m+[m[32m        <activity android:name=".ChooseAreaActivity"></activity>[m
+     </application>[m
+ [m
+ </manifest>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/src/main/assets/litepal.xml b/app/src/main/assets/litepal.xml[m
+[1mnew file mode 100644[m
+[1mindex 0000000..dfc861d[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/assets/litepal.xml[m
+[36m@@ -0,0 +1,10 @@[m
+[32m+[m[32m<?xml version="1.0" encoding="UTF-8" ?>[m
+[32m+[m[32m<litepal>[m
+[32m+[m[32m    <dbname value="Area"/>[m
+[32m+[m[32m    <version value="1"/>[m
+[32m+[m[32m    <list>[m
+[32m+[m[32m        <mapping class="com.example.zero.zeroweather.model.db.Province"/>[m
+[32m+[m[32m        <mapping class="com.example.zero.zeroweather.model.db.City"/>[m
+[32m+[m[32m        <mapping class="com.example.zero.zeroweather.model.db.County"/>[m
+[32m+[m[32m    </list>[m
+[32m+[m[32m</litepal>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/src/main/java/com/example/zero/zeroweather/ChooseAreaActivity.java b/app/src/main/java/com/example/zero/zeroweather/ChooseAreaActivity.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..7311f11[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/zero/zeroweather/ChooseAreaActivity.java[m
+[36m@@ -0,0 +1,158 @@[m
+[32m+[m[32mpackage com.example.zero.zeroweather;[m
+[32m+[m
+[32m+[m[32mimport android.support.v7.app.AppCompatActivity;[m
+[32m+[m[32mimport android.os.Bundle;[m
+[32m+[m[32mimport android.util.Log;[m
+[32m+[m[32mimport android.widget.ListView;[m
+[32m+[m
+[32m+[m[32mimport com.example.zero.zeroweather.model.gson.Area;[m
+[32m+[m[32mimport com.example.zero.zeroweather.model.db.City;[m
+[32m+[m[32mimport com.example.zero.zeroweather.model.db.County;[m
+[32m+[m[32mimport com.example.zero.zeroweather.model.db.Province;[m
+[32m+[m[32mimport com.example.zero.zeroweather.model.gson.CountyWeather;[m
+[32m+[m[32mimport com.example.zero.zeroweather.util.HttpUtil;[m
+[32m+[m[32mimport com.google.gson.Gson;[m
+[32m+[m[32mimport com.google.gson.reflect.TypeToken;[m
+[32m+[m
+[32m+[m[32mimport java.io.IOException;[m
+[32m+[m[32mimport java.nio.charset.Charset;[m
+[32m+[m[32mimport java.util.List;[m
+[32m+[m
+[32m+[m[32mimport okhttp3.Call;[m
+[32m+[m[32mimport okhttp3.Callback;[m
+[32m+[m[32mimport okhttp3.Response;[m
+[32m+[m[32mimport okhttp3.ResponseBody;[m
+[32m+[m[32mimport okio.Buffer;[m
+[32m+[m[32mimport okio.BufferedSource;[m
+[32m+[m
+[32m+[m[32mpublic class ChooseAreaActivity extends AppCompatActivity {[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    protected void onCreate(Bundle savedInstanceState) {[m
+[32m+[m[32m        super.onCreate(savedInstanceState);[m
+[32m+[m[32m        setContentView(R.layout.activity_choose_area);[m
+[32m+[m[32m        ListView listView = findViewById(R.id.areaListView);[m
+[32m+[m[32m        //如果还没省市县数据，则记得读取[m
+[32m+[m[32m//         requestArea();[m
+[32m+[m[32m    }[m
+[32m+[m[32m    /** 向服务器请求地区选择信息 */[m
+[32m+[m[32m    private void requestArea() {[m
+[32m+[m[32m        String address = "http://guolin.tech/api/china/";[m
+[32m+[m[32m        HttpUtil.sendOkHttpRequest(address, new Callback() {[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onFailure(Call call, IOException e) {[m
+[32m+[m[32m                e.printStackTrace();[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            /** string不能调用2次，因为源码中调用了close()，这里应该clone出来，手动关闭 */[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onResponse(Call call, Response response) throws IOException {[m
+[32m+[m[32m                ResponseBody responseBody = response.body();[m
+[32m+[m[32m                BufferedSource source = responseBody.source();[m
+[32m+[m[32m                source.request(Long.MAX_VALUE); // request the entire body.[m
+[32m+[m[32m                Buffer buffer = source.buffer();[m
+[32m+[m[32m                // clone buffer before reading from it[m
+[32m+[m[32m                String responseBodyString = buffer.clone().readString(Charset.forName("UTF-8"));[m
+[32m+[m[32m//                String responseData = response.body().string();[m
+[32m+[m[32m                response.close();[m
+[32m+[m[32m//                Log.d("deep", "onResponse: " + responseBodyString);[m
+[32m+[m[32m                parseProvince(responseBodyString);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /** 解析省级Json数据，并直接保存到数据库*/[m
+[32m+[m[32m    private void parseProvince(String jsonData) {[m
+[32m+[m[32m        Gson gson = new Gson();[m
+[32m+[m[32m        //解析数组要借助TypeToken将期望解析成的数据类型传入到fromJson中[m
+[32m+[m[32m        List<Area> areaList = gson.fromJson(jsonData,new TypeToken<List<Area>>(){}.getType());[m
+[32m+[m[32m        for(Area area:areaList){[m
+[32m+[m[32m            Province province = new Province();[m
+[32m+[m[32m            province.setProvinceCode(area.getId());[m
+[32m+[m[32m            province.setName(area.getName());[m
+[32m+[m[32m            province.save();[m
+[32m+[m[32m            //请求市级Json数据[m
+[32m+[m[32m            requestCity(area.getId());[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /** 请求市级Json数据 */[m
+[32m+[m[32m    private void requestCity(final int provinceId) {[m
+[32m+[m[32m        String address = "http://guolin.tech/api/china/" + provinceId;[m
+[32m+[m[32m        HttpUtil.sendOkHttpRequest(address, new Callback() {[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onFailure(Call call, IOException e) {[m
+[32m+[m[32m                e.printStackTrace();[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onResponse(Call call, Response response) throws IOException {[m
+[32m+[m[32m//                String responseData = response.body().string();[m
+[32m+[m[32m                ResponseBody responseBody = response.body();[m
+[32m+[m[32m                BufferedSource source = responseBody.source();[m
+[32m+[m[32m                source.request(Long.MAX_VALUE); // request the entire body.[m
+[32m+[m[32m                Buffer buffer = source.buffer();[m
+[32m+[m[32m                // clone buffer before reading from it[m
+[32m+[m[32m                String responseBodyString = buffer.clone().readString(Charset.forName("UTF-8"));[m
+[32m+[m[32m//                String responseData = response.body().string();[m
+[32m+[m[32m                response.close();[m
+[32m+[m[32m                parseCity(responseBodyString,provinceId);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /** 解析市级数据 */[m
+[32m+[m[32m    private void parseCity(String cityData,int provinceId) {[m
+[32m+[m[32m        Gson gson = new Gson();[m
+[32m+[m[32m        List<Area> areaList = gson.fromJson(cityData,new TypeToken<List<Area>>(){}.getType());[m
+[32m+[m[32m        for(Area area:areaList){[m
+[32m+[m[32m            City city = new City();[m
+[32m+[m[32m            city.setProvinceCode(provinceId);[m
+[32m+[m[32m            city.setName(area.getName());[m
+[32m+[m[32m            city.setCityCode(area.getId());[m
+[32m+[m[32m            city.save();[m
+[32m+[m[32m            //请求县级Json数据[m
+[32m+[m[32m            requestCounty(area.getId(),provinceId);[m
+[32m+[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /** 请求县级数据 */[m
+[32m+[m[32m    private void requestCounty(final int cityId, int provinceId) {[m
+[32m+[m[32m        String address = "http://guolin.tech/api/china/" + provinceId + "/" + cityId;[m
+[32m+[m[32m        HttpUtil.sendOkHttpRequest(address, new Callback() {[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onFailure(Call call, IOException e) {[m
+[32m+[m[32m                e.printStackTrace();[m
+[32m+[m[32m            }[m
+[32m+[m
+[32m+[m[32m            @Override[m
+[32m+[m[32m            public void onResponse(Call call, Response response) throws IOException {[m
+[32m+[m[32m//                String countyData = response.body().string();[m
+[32m+[m[32m                ResponseBody responseBody = response.body();[m
+[32m+[m[32m                BufferedSource source = responseBody.source();[m
+[32m+[m[32m                source.request(Long.MAX_VALUE); // request the entire body.[m
+[32m+[m[32m                Buffer buffer = source.buffer();[m
+[32m+[m[32m                // clone buffer before reading from it[m
+[32m+[m[32m                String responseBodyString = buffer.clone().readString(Charset.forName("UTF-8"));[m
+[32m+[m[32m//                String responseData = response.body().string();[m
+[32m+[m[32m                response.close();[m
+[32m+[m[32m                parseCounty(responseBodyString,cityId);[m
+[32m+[m[32m            }[m
+[32m+[m[32m        });[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    /** 解析县级数据 */[m
+[32m+[m[32m    private void parseCounty(String conutyData,int cityCode) {[m
+[32m+[m[32m        Gson gson = new Gson();[m
+[32m+[m[32m        List<CountyWeather> countyWeatherList = gson.fromJson(conutyData,new TypeToken<List<CountyWeather>>(){}.getType());[m
+[32m+[m[32m        for(CountyWeather countyWeather:countyWeatherList){[m
+[32m+[m[32m            County county = new County();[m
+[32m+[m[32m            county.setCityCode(cityCode);[m
+[32m+[m[32m            county.setCountyCode(countyWeather.getId());[m
+[32m+[m[32m            county.setName(countyWeather.getName());[m
+[32m+[m[32m            county.setWeatherId(countyWeather.getWeatherId());[m
+[32m+[m[32m            county.save();[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/java/com/example/zero/zeroweather/MainActivity.java b/app/src/main/java/com/example/zero/zeroweather/MainActivity.java[m
+[1mindex d552988..b65e5e7 100644[m
+[1m--- a/app/src/main/java/com/example/zero/zeroweather/MainActivity.java[m
+[1m+++ b/app/src/main/java/com/example/zero/zeroweather/MainActivity.java[m
+[36m@@ -1,16 +1,17 @@[m
+ package com.example.zero.zeroweather;[m
+ [m
+[32m+[m[32mimport android.content.Intent;[m
+ import android.support.v7.app.AppCompatActivity;[m
+ import android.os.Bundle;[m
+ [m
+ public class MainActivity extends AppCompatActivity {[m
+ [m
+[31m-    private String str;[m
+[31m-[m
+     @Override[m
+     protected void onCreate(Bundle savedInstanceState) {[m
+         super.onCreate(savedInstanceState);[m
+         setContentView(R.layout.activity_main);[m
+[31m-	[m
+[32m+[m[32m        Intent intent = new Intent(MainActivity.this,ChooseAreaActivity.class);[m
+[32m+[m[32m        startActivity(intent);[m
+[32m+[m
+     }[m
+ }[m
+[1mdiff --git a/app/src/main/java/com/example/zero/zeroweather/model/db/City.java b/app/src/main/java/com/example/zero/zeroweather/model/db/City.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..59feb1d[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/zero/zeroweather/model/db/City.java[m
+[36m@@ -0,0 +1,42 @@[m
+[32m+[m[32mpackage com.example.zero.zeroweather.model.db;[m
+[32m+[m
+[32m+[m[32mimport org.litepal.crud.DataSupport;[m
+[32m+[m
+[32m+[m[32mpublic class City extends DataSupport {[m
+[32m+[m[32m    private int id;[m
+[32m+[m[32m    private String name;[m
+[32m+[m[32m    private int provinceCode;[m
+[32m+[m[32m    private int cityCode;[m
+[32m+[m
+[32m+[m[32m    public int getId() {[m
+[32m+[m[32m        return id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setId(int id) {[m
+[32m+[m[32m        this.id = id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getName() {[m
+[32m+[m[32m        return name;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setName(String name) {[m
+[32m+[m[32m        this.name = name;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public int getProvinceCode() {[m
+[32m+[m[32m        return provinceCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setProvinceCode(int provinceCode) {[m
+[32m+[m[32m        this.provinceCode = provinceCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public int getCityCode() {[m
+[32m+[m[32m        return cityCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setCityCode(int cityCode) {[m
+[32m+[m[32m        this.cityCode = cityCode;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/java/com/example/zero/zeroweather/model/db/County.java b/app/src/main/java/com/example/zero/zeroweather/model/db/County.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..fe0a01b[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/zero/zeroweather/model/db/County.java[m
+[36m@@ -0,0 +1,51 @@[m
+[32m+[m[32mpackage com.example.zero.zeroweather.model.db;[m
+[32m+[m
+[32m+[m[32mimport org.litepal.crud.DataSupport;[m
+[32m+[m
+[32m+[m[32mpublic class County extends DataSupport {[m
+[32m+[m[32m    private int id;[m
+[32m+[m[32m    private String name;[m
+[32m+[m[32m    private int cityCode;[m
+[32m+[m[32m    private int countyCode;[m
+[32m+[m[32m    private String weatherId;[m
+[32m+[m
+[32m+[m[32m    public int getId() {[m
+[32m+[m[32m        return id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setId(int id) {[m
+[32m+[m[32m        this.id = id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getName() {[m
+[32m+[m[32m        return name;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setName(String name) {[m
+[32m+[m[32m        this.name = name;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public int getCityCode() {[m
+[32m+[m[32m        return cityCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setCityCode(int cityCode) {[m
+[32m+[m[32m        this.cityCode = cityCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public int getCountyCode() {[m
+[32m+[m[32m        return countyCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setCountyCode(int countyCode) {[m
+[32m+[m[32m        this.countyCode = countyCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getWeatherId() {[m
+[32m+[m[32m        return weatherId;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setWeatherId(String weatherId) {[m
+[32m+[m[32m        this.weatherId = weatherId;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/java/com/example/zero/zeroweather/model/db/Province.java b/app/src/main/java/com/example/zero/zeroweather/model/db/Province.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..0b7bcf4[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/zero/zeroweather/model/db/Province.java[m
+[36m@@ -0,0 +1,33 @@[m
+[32m+[m[32mpackage com.example.zero.zeroweather.model.db;[m
+[32m+[m
+[32m+[m[32mimport org.litepal.crud.DataSupport;[m
+[32m+[m
+[32m+[m[32mpublic class Province extends DataSupport {[m
+[32m+[m[32m    private int id;[m
+[32m+[m[32m    private String name;[m
+[32m+[m[32m    private int provinceCode;[m
+[32m+[m
+[32m+[m[32m    public int getProvinceCode() {[m
+[32m+[m[32m        return provinceCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setProvinceCode(int provinceCode) {[m
+[32m+[m[32m        this.provinceCode = provinceCode;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public int getId() {[m
+[32m+[m[32m        return id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setId(int id) {[m
+[32m+[m[32m        this.id = id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getName() {[m
+[32m+[m[32m        return name;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setName(String name) {[m
+[32m+[m[32m        this.name = name;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/java/com/example/zero/zeroweather/model/gson/Area.java b/app/src/main/java/com/example/zero/zeroweather/model/gson/Area.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..77bbca4[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/zero/zeroweather/model/gson/Area.java[m
+[36m@@ -0,0 +1,22 @@[m
+[32m+[m[32mpackage com.example.zero.zeroweather.model.gson;[m
+[32m+[m
+[32m+[m[32mpublic class Area {[m
+[32m+[m[32m    private int id;[m
+[32m+[m[32m    private String name;[m
+[32m+[m
+[32m+[m[32m    public int getId() {[m
+[32m+[m[32m        return id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setId(int id) {[m
+[32m+[m[32m        this.id = id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getName() {[m
+[32m+[m[32m        return name;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setName(String name) {[m
+[32m+[m[32m        this.name = name;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/java/com/example/zero/zeroweather/model/gson/CountyWeather.java b/app/src/main/java/com/example/zero/zeroweather/model/gson/CountyWeather.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..9c4c3ff[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/zero/zeroweather/model/gson/CountyWeather.java[m
+[36m@@ -0,0 +1,31 @@[m
+[32m+[m[32mpackage com.example.zero.zeroweather.model.gson;[m
+[32m+[m
+[32m+[m[32mpublic class CountyWeather {[m
+[32m+[m[32m    private int id;[m
+[32m+[m[32m    private String name;[m
+[32m+[m[32m    private String weatherId;[m
+[32m+[m
+[32m+[m[32m    public int getId() {[m
+[32m+[m[32m        return id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setId(int id) {[m
+[32m+[m[32m        this.id = id;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getName() {[m
+[32m+[m[32m        return name;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setName(String name) {[m
+[32m+[m[32m        this.name = name;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public String getWeatherId() {[m
+[32m+[m[32m        return weatherId;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    public void setWeatherId(String weatherId) {[m
+[32m+[m[32m        this.weatherId = weatherId;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/java/com/example/zero/zeroweather/util/HttpUtil.java b/app/src/main/java/com/example/zero/zeroweather/util/HttpUtil.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..f92a0da[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/java/com/example/zero/zeroweather/util/HttpUtil.java[m
+[36m@@ -0,0 +1,15 @@[m
+[32m+[m[32mpackage com.example.zero.zeroweather.util;[m
+[32m+[m
+[32m+[m[32mimport okhttp3.Callback;[m
+[32m+[m[32mimport okhttp3.OkHttpClient;[m
+[32m+[m[32mimport okhttp3.Request;[m
+[32m+[m
+[32m+[m[32mpublic class HttpUtil {[m
+[32m+[m[32m    public static void sendOkHttpRequest(String address, Callback callback){[m
+[32m+[m[32m        OkHttpClient client = new OkHttpClient();[m
+[32m+[m[32m        Request request = new Request.Builder()[m
+[32m+[m[32m                .url(address)[m
+[32m+[m[32m                .build();[m
+[32m+[m[32m        client.newCall(request).enqueue(callback);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/app/src/main/res/layout/activity_choose_area.xml b/app/src/main/res/layout/activity_choose_area.xml[m
+[1mnew file mode 100644[m
+[1mindex 0000000..2989996[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/main/res/layout/activity_choose_area.xml[m
+[36m@@ -0,0 +1,14 @@[m
+[32m+[m[32m<?xml version="1.0" encoding="utf-8"?>[m
+[32m+[m[32m<LinearLayout[m
+[32m+[m[32m    xmlns:android="http://schemas.android.com/apk/res/android"[m
+[32m+[m[32m    android:layout_width="match_parent"[m
+[32m+[m[32m    android:layout_height="match_parent">[m
+[32m+[m
+[32m+[m[32m    <ListView[m
+[32m+[m[32m        android:id="@+id/areaListView"[m
+[32m+[m[32m        android:layout_width="match_parent"[m
+[32m+[m[32m        android:layout_height="match_parent">[m
+[32m+[m
+[32m+[m[32m    </ListView>[m
+[32m+[m
+[32m+[m[32m</LinearLayout>[m
+\ No newline at end of file[m
+[1mdiff --git a/app/src/test/java/com/example/zero/zeroweather/ExampleUnitTest.java b/app/src/test/java/com/example/zero/zeroweather/ExampleUnitTest.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..e9772ee[m
+[1m--- /dev/null[m
+[1m+++ b/app/src/test/java/com/example/zero/zeroweather/ExampleUnitTest.java[m
+[36m@@ -0,0 +1,17 @@[m
+[32m+[m[32mpackage com.example.zero.zeroweather;[m
+[32m+[m
+[32m+[m[32mimport org.junit.Test;[m
+[32m+[m
+[32m+[m[32mimport static org.junit.Assert.*;[m
+[32m+[m
+[32m+[m[32m/**[m
+[32m+[m[32m * Example local unit test, which will execute on the development machine (host).[m
+[32m+[m[32m *[m
+[32m+[m[32m * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>[m
+[32m+[m[32m */[m
+[32m+[m[32mpublic class ExampleUnitTest {[m
+[32m+[m[32m    @Test[m
+[32m+[m[32m    public void addition_isCorrect() {[m
+[32m+[m[32m        assertEquals(4, 2 + 2);[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
